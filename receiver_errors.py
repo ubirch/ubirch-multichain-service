@@ -1,9 +1,5 @@
 # coding: utf-8
-#
-# ubirch anchoring
-#
-# @author Victor Patrin
-#
+
 # Copyright (c) 2018 ubirch GmbH.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +8,7 @@
 #
 # http://www.apache.org/licenses/LICENSE-2.0
 #
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,14 +16,12 @@
 # limitations under the License.
 
 from library import *
-
-args = set_arguments("MultiChain")
+args = set_arguments("IOTA")
 port = args.port
-
-producer = producerInstance(port)
-queue1 = consumerInstance('queue1', port)
-queue2 = consumerInstance('queue2', port)
 errorQueue = consumerInstance('errorQueue', port)
+
+for msg in errorQueue:
+    print (msg.value)
 
 
 
