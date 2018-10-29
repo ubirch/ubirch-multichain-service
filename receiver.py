@@ -17,7 +17,7 @@
 
 from library import *
 
-args = set_arguments("IOTA")
+args = set_arguments("MultiChain")
 port = args.port
 queue2 = consumerInstance('queue2', port)
 

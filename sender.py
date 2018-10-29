@@ -20,7 +20,7 @@ import hashlib
 
 from library import *
 
-args = set_arguments("IOTA")
+args = set_arguments("MultiChain")
 port = args.port
 
 producer = producerInstance(port)

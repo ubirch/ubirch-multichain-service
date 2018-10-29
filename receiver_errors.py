@@ -16,7 +16,7 @@
 # limitations under the License.
 
 from library import *
-args = set_arguments("IOTA")
+args = set_arguments("MultiChain")
 port = args.port
 errorQueue = consumerInstance('errorQueue', port)
 
