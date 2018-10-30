@@ -19,7 +19,6 @@
 # limitations under the License.
 
 from library import *
-import mcrpc
 
 args = set_arguments("MultiChain")
 port = args.port
@@ -29,9 +28,3 @@ producer = producerInstance(port)
 queue1 = consumerInstance('queue1', port)
 queue2 = consumerInstance('queue2', port)
 errorQueue = consumerInstance('errorQueue', port)
-
-#MultiChain
-
-client = mcrpc.RpcClient('127.0.0.1', '4770', 'test', 'test')
-
-
