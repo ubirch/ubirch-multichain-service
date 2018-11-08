@@ -38,15 +38,31 @@ def set_arguments(servicetype):
     parser = argparse.ArgumentParser(description="Ubirch " + servicetype + " anchoring service")
     parser.add_argument('-p', '--port',
                         help="port of the producer or consumer, default is 9092",
-                        metavar="PORT", type=list, default=['localhost:9092'])
-    parser.add_argument('-kf', '--keyfile', help='location of your keyfile', metavar='PATH TO KEYFILE', type=str)
+                        metavar="KAFKA PORT", type=list, default=['localhost:9092'])
+
+
+    if servicetype == "MultiChain":
+        parser.add_argument('-rpcuser', help="For multichain API calls", metavar="RPC USER",
+                            type=str, default = 'multichainrpc')
+        parser.add_argument('-rpcpasswd', help="For multichain API calls", metavar="RPC PASSWORD",
+                            type=str, default = 'YoUrLoNgRpCpAsSwOrD')
+        parser.add_argument('-rpchost', help="For multichain API calls", metavar="RPC HOST",
+                            type=str, default = 'localhost')
+        parser.add_argument('-rpcport', help="For multichain API calls", metavar="RPC PORT",
+                            type=str, default = '4770')
+        parser.add_argument('-chainname', help="For multichain API calls", metavar="CHAIN NAME",
+                            type=str, default = 'ubirch-multichain')
+
+    if servicetype == "ethereum":
+        parser.add_argument('-p', '--pwd', help="password used to decrypt the Keystore File", metavar="PASSWORD", type=str)
+        parser.add_argument('-kf', '--keyfile', help='location of your keyfile', metavar='PATH TO KEYFILE', type=str)
 
     return parser.parse_args()
 
 
 def send(producer, topic, message):
     """ Sends a message to the topic via the producer and then flushes"""
-    message_bytes = bytes(message)
+    message_bytes = bytes(message.encode('utf-8'))
     if type(topic) == bytes:
         topic = topic.decode('utf-8')
     producer.send(topic, message_bytes)

@@ -1,1 +1,2 @@
 kafka-python >= 1.4.3
+Savoir >= 1.0.6
