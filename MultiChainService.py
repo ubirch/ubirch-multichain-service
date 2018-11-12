@@ -31,7 +31,7 @@ chainname = args.chainname
 
 api = Savoir(rpcuser, rpcpasswd, rpchost, rpcport, chainname)
 
-
+api('getinfo')
 #Kafka
 producer = producerInstance(port)
 queue1 = consumerInstance('queue1', port)
