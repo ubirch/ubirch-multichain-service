@@ -18,9 +18,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from kafka import *
 import json
 import argparse
+from kafka import *
+
 
 def producerInstance(port):
     """Creates an instance of a producer """
@@ -35,7 +36,7 @@ def consumerInstance(topics, port):
 
 
 def set_arguments(servicetype):
-    parser = argparse.ArgumentParser(description="Ubirch " + servicetype + " anchoring service")
+    parser = argparse.ArgumentParser(description="Ubirch " + servicetype + " anchoring service using Kafka")
     parser.add_argument('-p', '--port',
                         help="port of the producer or consumer, default is 9092",
                         metavar="KAFKA PORT", type=list, default=['localhost:9092'])

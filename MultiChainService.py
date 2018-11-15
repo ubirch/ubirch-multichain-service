@@ -20,20 +20,66 @@
 
 from library import *
 from Savoir import *
+import json
+import subprocess
 
 args = set_arguments("MultiChain")
 port = args.port
-rpcuser = args.rpcuser
-rpcpasswd = args.rpcpasswd
-rpchost = args.rpchost
-rpcport = args.rpcport
-chainname = args.chainname
 
-api = Savoir(rpcuser, rpcpasswd, rpchost, rpcport, chainname)
-
-api('getinfo')
 #Kafka
 producer = producerInstance(port)
 queue1 = consumerInstance('queue1', port)
 queue2 = consumerInstance('queue2', port)
 errorQueue = consumerInstance('errorQueue', port)
+
+#  3rd party lib not working well
+#
+# rpcuser = args.rpcuser
+# rpcpasswd = args.rpcpasswd
+# rpchost = args.rpchost
+# rpcport = args.rpcport
+# chainname = args.chainname
+# api = Savoir(rpcuser, rpcpasswd, rpchost, rpcport, chainname)
+# print(api.getinfo().decode('utf-8'))
+
+
+
+#TODO : PASS THESE AS ARGS
+
+path = "/usr/local/bin/multichain-cli"
+chain = "ubirch-multichain"
+
+def APIcall(chain,command):
+    output = subprocess.check_output([path, chain, command]).decode("utf-8")
+    print(output)
+    return(json.loads(output))
+
+# getinfo = 'getinfo'
+# APIcall(chain, command)
+
+#TODO : WALLET MANAGEMENT
+#TODO : ubirch-python-utils integration after kafka debugging
+
+def genaddress():
+    return APIcall(chain, "getnewaddress")
+
+def listaddresses():
+    return APIcall(chain, "getaddresses")
+
+listaddresses()
+
+
+#TODO : STORESTRING FUNC
+
+def storeStringMC(string):
+    if is_hex(string):
+
+
+
+        #txhash =
+        print({'status': 'added', 'txid': txhash, 'message': string})
+
+        return {'status': 'added', 'txid': txhash, 'message': string}
+
+    else:
+        return False

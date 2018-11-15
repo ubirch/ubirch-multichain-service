@@ -1,4 +1,0 @@
-[2018-10-23 16:01:34,277] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 0 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
-[2018-10-23 16:53:43,432] WARN Attempting to send response via channel for which there is no open connection, connection id 10.10.181.147:9092-10.10.181.147:46280-1 (kafka.network.Processor)
-[2018-10-23 16:53:43,687] WARN Attempting to send response via channel for which there is no open connection, connection id 10.10.181.147:9092-10.10.181.147:46288-2 (kafka.network.Processor)
-[2018-10-23 16:55:41,079] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 0 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
