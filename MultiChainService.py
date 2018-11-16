@@ -49,29 +49,38 @@ errorQueue = consumerInstance('errorQueue', port)
 path = "/usr/local/bin/multichain-cli"
 chain = "ubirch-multichain"
 
-def APIcall(chain,command):
-    output = subprocess.check_output([path, chain, command]).decode("utf-8")
+def apicall(chain, command):
+    output = subprocess.check_output([path, chain] + command).decode("utf-8")
     print(output)
-    return(json.loads(output))
+    return(output)
 
-# getinfo = 'getinfo'
-# APIcall(chain, command)
+# getinfo = ['getinfo']
+# apicall(chain, getinfo)
 
 #TODO : WALLET MANAGEMENT
 #TODO : ubirch-python-utils integration after kafka debugging
 
+#TODO : make command parser for APIcall !!!!!
+
+
 def genaddress():
-    return APIcall(chain, "getnewaddress")
+    return apicall(chain, ["getnewaddress"])
+
 
 def listaddresses():
-    return APIcall(chain, "getaddresses")
+    return apicall(chain, ["getaddresses"])
 
-listaddresses()
 
+#listaddresses()
+
+#apicall(chain, ['grantfrom', '1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q', '1PnqYiui39fEXLuFU3sPEHwnK2cCdcWz3JZfeo', 'admin'])
+apicall(chain, ['listpermissions', 'admin'])
+apicall(chain, ['listpermissions', 'issue']) #output 1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q
 
 #TODO : STORESTRING FUNC
 
-def storeStringMC(string):
+
+def storestringmc(string):
     if is_hex(string): #Make Transaction
 
         print({'status': 'added', 'txid': txhash, 'message': string})
