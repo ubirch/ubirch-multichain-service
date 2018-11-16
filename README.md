@@ -17,7 +17,7 @@ Please, run in your virtual environment:
 3. Set up a MultiChain blockchain. You can check out [this link](https://www.multichain.com/developers/creating-connecting/) or the MultiChain [getting started page](https://www.multichain.com/getting-started/) for more details.
 
 
-        multichain-util creathttps://www.multichain.com/download-install/e [chain-name]
+        multichain-util create [chain-name]
        
 And to connect to connect to an existing chain : 
         
