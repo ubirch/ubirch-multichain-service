@@ -80,11 +80,11 @@ apicall(chain, ['listpermissions', 'issue']) #output 1Gynv7tHvXW2j643Ah6rmP2MnsP
 #TODO : STORESTRING FUNC
 
 
-def storestringmc(string):
-    if is_hex(string): #Make Transaction
-
-        print({'status': 'added', 'txid': txhash, 'message': string})
-        return {'status': 'added', 'txid': txhash, 'message': string}
-
-    else: #Return error
-        return False
+# def storestringmc(string):
+#     if is_hex(string): #Make Transaction
+#
+#         print({'status': 'added', 'txid': txhash, 'message': string})
+#         return {'status': 'added', 'txid': txhash, 'message': string}
+#
+#     else: #Return error
+#         return False
