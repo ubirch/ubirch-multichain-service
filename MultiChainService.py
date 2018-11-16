@@ -19,7 +19,6 @@
 # limitations under the License.
 
 from library import *
-from Savoir import *
 import json
 import subprocess
 
@@ -32,7 +31,8 @@ queue1 = consumerInstance('queue1', port)
 queue2 = consumerInstance('queue2', port)
 errorQueue = consumerInstance('errorQueue', port)
 
-#  3rd party lib not working well
+# from Savoir import *
+# 3rd party lib not working well
 #
 # rpcuser = args.rpcuser
 # rpcpasswd = args.rpcpasswd
@@ -72,14 +72,10 @@ listaddresses()
 #TODO : STORESTRING FUNC
 
 def storeStringMC(string):
-    if is_hex(string):
+    if is_hex(string): #Make Transaction
 
-
-
-        #txhash =
         print({'status': 'added', 'txid': txhash, 'message': string})
-
         return {'status': 'added', 'txid': txhash, 'message': string}
 
-    else:
+    else: #Return error
         return False
