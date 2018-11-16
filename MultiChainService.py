@@ -42,42 +42,63 @@ errorQueue = consumerInstance('errorQueue', port)
 # api = Savoir(rpcuser, rpcpasswd, rpchost, rpcport, chainname)
 # print(api.getinfo().decode('utf-8'))
 
-
-
 #TODO : PASS THESE AS ARGS
 
 path = "/usr/local/bin/multichain-cli"
 chain = "ubirch-multichain"
 
-def apicall(chain, command):
-    output = subprocess.check_output([path, chain] + command).decode("utf-8")
-    print(output)
-    return(output)
 
-# getinfo = ['getinfo']
+def apicall(chain, command):
+    command_split = command.split(" ")
+    print(command_split)
+    output = subprocess.check_output([path, chain] + command_split).decode("utf-8")
+    print("Ouput of command '%s' is : \n %s \n" %(command, output))
+    return output
+
+# getinfo = 'getinfo'
 # apicall(chain, getinfo)
 
-#TODO : WALLET MANAGEMENT
 #TODO : ubirch-python-utils integration after kafka debugging
 
 #TODO : make command parser for APIcall !!!!!
 
+#TODO : WALLET AND PERMISSION MANAGEMENT
 
 def genaddress():
-    return apicall(chain, ["getnewaddress"])
+    return apicall(chain, "getnewaddress")
 
+admin_address = "1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q"
 
 def listaddresses():
-    return apicall(chain, ["getaddresses"])
+    return apicall(chain, "listaddresses")
+
+def grantpermission(address, permission):
+    command = "grant %s %s" %(address, permission)
+    return apicall(chain, command)
 
 
-#listaddresses()
+## ASSET ISSUANCE
 
-#apicall(chain, ['grantfrom', '1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q', '1PnqYiui39fEXLuFU3sPEHwnK2cCdcWz3JZfeo', 'admin'])
-apicall(chain, ['listpermissions', 'admin'])
-apicall(chain, ['listpermissions', 'issue']) #output 1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q
 
-#TODO : STORESTRING FUNC
+def createnewasset(issuing_address, asset_name, asset_qty): #'open':true means asset can be issued after being created
+    command = "issuefrom %s %s '{'name':%s,'open':true}' %d" %(issuing_address, issuing_address, asset_name, asset_qty)
+    return apicall(chain, command)
+
+## Working great !Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q
+# createnewasset(admin_address, "test", 10000)
+
+
+def issuemore(issuing_address, recipient, asset_name, asset_qty):
+    command = "issuemorefrom %s %s %s %d" %(issuing_address, recipient, asset_name, asset_qty)
+    return apicall(chain, command)
+
+apicall(chain, 'listassets')
+## Working great!
+#createnewasset(admin_address, 'eur', 5000)
+issuemore(admin_address, admin_address, 'eur', 5000)
+
+
+# TODO : STORESTRING FUNC
 
 
 # def storestringmc(string):
