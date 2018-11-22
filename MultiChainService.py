@@ -1,7 +1,5 @@
 # coding: utf-8
 #
-# ubirch anchoring
-#
 # @author Victor Patrin
 #
 # Copyright (c) 2018 ubirch GmbH.
@@ -18,7 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from library import *
+
+from ubirch.anchoring_kafka import *
+from kafka import *
 import json
 import subprocess
 
@@ -26,21 +26,9 @@ args = set_arguments("MultiChain")
 port = args.port
 
 #Kafka
-producer = producerInstance(port)
-queue1 = consumerInstance('queue1', port)
-queue2 = consumerInstance('queue2', port)
-errorQueue = consumerInstance('errorQueue', port)
+producer = KafkaProducer(bootstrap_servers=port)
+queue1 = KafkaConsumer('queue1', bootstrap_servers=port)
 
-# from Savoir import *
-# 3rd party lib not working well
-#
-# rpcuser = args.rpcuser
-# rpcpasswd = args.rpcpasswd
-# rpchost = args.rpchost
-# rpcport = args.rpcport
-# chainname = args.chainname
-# api = Savoir(rpcuser, rpcpasswd, rpchost, rpcport, chainname)
-# print(api.getinfo().decode('utf-8'))
 
 #TODO : PASS THESE AS ARGS
 
@@ -57,8 +45,6 @@ def apicall(chain, command):
 
 # getinfo = 'getinfo'
 # apicall(chain, getinfo)
-
-#TODO : ubirch-python-utils integration after kafka debugging
 
 #TODO : make command parser for APIcall !!!!!
 
@@ -84,16 +70,13 @@ def createnewasset(issuing_address, asset_name, asset_qty): #'open':true means a
     command = "issuefrom %s %s '{'name':%s,'open':true}' %d" %(issuing_address, issuing_address, asset_name, asset_qty)
     return apicall(chain, command)
 
-## Working great !Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q
-# createnewasset(admin_address, "test", 10000)
-
 
 def issuemore(issuing_address, recipient, asset_name, asset_qty):
     command = "issuemorefrom %s %s %s %d" %(issuing_address, recipient, asset_name, asset_qty)
     return apicall(chain, command)
 
+
 apicall(chain, 'listassets')
-## Working great!
 #createnewasset(admin_address, 'eur', 5000)
 issuemore(admin_address, admin_address, 'eur', 5000)
 
@@ -101,11 +84,23 @@ issuemore(admin_address, admin_address, 'eur', 5000)
 # TODO : STORESTRING FUNC
 
 
-# def storestringmc(string):
-#     if is_hex(string): #Make Transaction
-#
-#         print({'status': 'added', 'txid': txhash, 'message': string})
-#         return {'status': 'added', 'txid': txhash, 'message': string}
-#
-#     else: #Return error
-#         return False
+def storestringmc(string):
+    if is_hex(string):
+
+        txhash = 'txhash'
+        print({'status': 'added', 'txid': txhash, 'message': string})
+
+        return {'status': 'added', 'txid': txhash, 'message': string}
+
+    else:
+        return False
+
+
+
+def main(storefunction):
+    """Continuously polls the queue for messages"""
+    while True:
+        poll(queue1, 'errorQueue', 'queue2', storefunction, producer)
+
+
+# main(storestringmc)
