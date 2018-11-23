@@ -23,7 +23,8 @@ from kafka import *
 args = set_arguments("MultiChain")
 port = args.port
 
-queue2 = KafkaConsumer('queue2', bootstrap_servers=port)
+queue2 = KafkaConsumer('queue2', bootstrap_servers=port, value_deserializer=lambda m: json.loads(m.decode('ascii')))
+
 
 for msg in queue2:
     print(json.dumps(msg.value))

@@ -22,7 +22,8 @@ from kafka import *
 
 args = set_arguments("MultiChain")
 port = args.port
-errorQueue = KafkaConsumer('errorQueue', bootstrap_servers=port)
+errorQueue = KafkaConsumer('errorQueue', bootstrap_servers=port, value_deserializer=lambda m: json.loads(m.decode('ascii')))
+
 
 for msg in errorQueue:
     print(json.dumps(msg.value))

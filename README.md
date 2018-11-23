@@ -1,4 +1,4 @@
-# ubirch-iota-service
+# ubirch-multichain-service
 A MultiChain based anchoring service.
 This service uses Apache Kafka for messaging.
 

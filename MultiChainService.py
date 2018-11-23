@@ -19,7 +19,6 @@
 
 from ubirch.anchoring_kafka import *
 from kafka import *
-import json
 import subprocess
 
 args = set_arguments("MultiChain")
@@ -35,6 +34,7 @@ queue1 = KafkaConsumer('queue1', bootstrap_servers=port)
 path = "/usr/local/bin/multichain-cli"
 chain = "ubirch-multichain"
 
+#TODO : make command parser for APIcall !!!!!
 
 def apicall(chain, command):
     command_split = command.split(" ")
@@ -43,64 +43,71 @@ def apicall(chain, command):
     print("Ouput of command '%s' is : \n %s \n" %(command, output))
     return output
 
-# getinfo = 'getinfo'
-# apicall(chain, getinfo)
 
-#TODO : make command parser for APIcall !!!!!
+# WALLET AND PERMISSION MANAGEMENT
 
-#TODO : WALLET AND PERMISSION MANAGEMENT
 
 def genaddress():
     return apicall(chain, "getnewaddress")
 
-admin_address = "1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q"
 
 def listaddresses():
     return apicall(chain, "listaddresses")
+
 
 def grantpermission(address, permission):
     command = "grant %s %s" %(address, permission)
     return apicall(chain, command)
 
 
-## ASSET ISSUANCE
+def sendasset(asset, receiver, qty):
+    command = "sendasset %s %s %d" %(receiver, asset, qty)
+    return apicall(chain, command)
+
+
+#               ASSET ISSUANCE
 
 
 def createnewasset(issuing_address, asset_name, asset_qty): #'open':true means asset can be issued after being created
-    command = "issuefrom %s %s '{'name':%s,'open':true}' %d" %(issuing_address, issuing_address, asset_name, asset_qty)
+    command = "issue %s {'name':%s,'open':true} %d" %(issuing_address, asset_name, asset_qty)
     return apicall(chain, command)
 
 
-def issuemore(issuing_address, recipient, asset_name, asset_qty):
-    command = "issuemorefrom %s %s %s %d" %(issuing_address, recipient, asset_name, asset_qty)
+def issuemore(recipient, asset_name, asset_qty):
+    command = "issuemore %s %s %d" %(recipient, asset_name, asset_qty)
     return apicall(chain, command)
 
 
-apicall(chain, 'listassets')
-#createnewasset(admin_address, 'eur', 5000)
-issuemore(admin_address, admin_address, 'eur', 5000)
+admin_address = '1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q'
+receiver_address = '1KSawFvmrWypch3CMG14LcH1GX8UK9wAMPzgVT'
 
+#createnewasset(admin_address, 'eur3', 5000)
+#apicall(chain, 'listassets')
+#issuemore(admin_address, "'{'name':'eur','open':true}'", 5000)
+#listaddresses()
+
+# grantpermission(admin_address, 'send')
+# grantpermission(receiver_address, 'receive')
+# sendasset("dollars", receiver_address, 1)
 
 # TODO : STORESTRING FUNC
 
 
-def storestringmc(string):
-    if is_hex(string):
+def storestringmc(message):
+    if is_hex(message):
+        txhash = sendasset("dollars", receiver_address, 1).split('\n')[0]
 
-        txhash = 'txhash'
-        print({'status': 'added', 'txid': txhash, 'message': string})
-
-        return {'status': 'added', 'txid': txhash, 'message': string}
+        print({'status': 'added', 'txid': txhash, 'message': message})
+        return {'status': 'added', 'txid': txhash, 'message': message}
 
     else:
         return False
 
 
-
 def main(storefunction):
-    """Continuously polls the queue for messages"""
+    """Continuously polls the topic for messages"""
     while True:
         poll(queue1, 'errorQueue', 'queue2', storefunction, producer)
 
 
-# main(storestringmc)
+main(storestringmc)
