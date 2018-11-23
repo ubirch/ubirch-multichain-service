@@ -34,7 +34,7 @@ queue1 = KafkaConsumer('queue1', bootstrap_servers=port)
 path = "/usr/local/bin/multichain-cli"
 chain = "ubirch-multichain"
 
-#TODO : make command parser for APIcall !!!!!
+# TODO: make parser for apicall
 
 def apicall(chain, command):
     command_split = command.split(" ")
@@ -44,9 +44,7 @@ def apicall(chain, command):
     return output
 
 
-# WALLET AND PERMISSION MANAGEMENT
-
-
+#   WALLET AND PERMISSION MANAGEMENT
 def genaddress():
     return apicall(chain, "getnewaddress")
 
@@ -65,9 +63,7 @@ def sendasset(asset, receiver, qty):
     return apicall(chain, command)
 
 
-#               ASSET ISSUANCE
-
-
+#   ASSET ISSUANCE
 def createnewasset(issuing_address, asset_name, asset_qty): #'open':true means asset can be issued after being created
     command = "issue %s {'name':%s,'open':true} %d" %(issuing_address, asset_name, asset_qty)
     return apicall(chain, command)
@@ -80,17 +76,6 @@ def issuemore(recipient, asset_name, asset_qty):
 
 admin_address = '1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q'
 receiver_address = '1KSawFvmrWypch3CMG14LcH1GX8UK9wAMPzgVT'
-
-#createnewasset(admin_address, 'eur3', 5000)
-#apicall(chain, 'listassets')
-#issuemore(admin_address, "'{'name':'eur','open':true}'", 5000)
-#listaddresses()
-
-# grantpermission(admin_address, 'send')
-# grantpermission(receiver_address, 'receive')
-# sendasset("dollars", receiver_address, 1)
-
-# TODO : STORESTRING FUNC
 
 
 def storestringmc(message):
