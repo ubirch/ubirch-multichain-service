@@ -17,16 +17,32 @@
 # limitations under the License.
 
 
-from ubirch.anchoring_kafka import *
-from kafka import *
 import subprocess
+from ubirch.anchoring import *
+from kafka import *
 
 args = set_arguments("MultiChain")
-port = args.port
+server = args.server
 
-#Kafka
-producer = KafkaProducer(bootstrap_servers=port)
-queue1 = KafkaConsumer('queue1', bootstrap_servers=port)
+
+if server == 'SQS':
+    print("SERVICE USING SQS QUEUE MESSAGING")
+    url = args.url
+    region = args.region
+    aws_secret_access_key = args.accesskey
+    aws_access_key_id = args.keyid
+    queue1 = getQueue('queue1', url, region, aws_secret_access_key, aws_access_key_id)
+    queue2 = getQueue('queue2', url, region, aws_secret_access_key, aws_access_key_id)
+    errorQueue = getQueue('errorQueue', url, region, aws_secret_access_key, aws_access_key_id)
+    producer=None
+
+elif server == 'KAFKA':
+    print("SERVICE USING APACHE KAFKA FOR MESSAGING")
+    port = args.port
+    producer = KafkaProducer(bootstrap_servers=port)
+    queue1 = KafkaConsumer('queue1', bootstrap_servers=port)
+    queue2=None
+    errorQueue=None
 
 
 #TODO : PASS THESE AS ARGS
@@ -34,7 +50,7 @@ queue1 = KafkaConsumer('queue1', bootstrap_servers=port)
 path = "/usr/local/bin/multichain-cli"
 chain = "ubirch-multichain"
 
-# TODO: make parser for apicall
+# TODO: Make parser for apicall
 
 def apicall(chain, command):
     command_split = command.split(" ")
@@ -90,9 +106,12 @@ def storestringmc(message):
 
 
 def main(storefunction):
-    """Continuously polls the topic for messages"""
+    """Continuously polls the queue for messages
+    Anchors a hash from queue1
+    Sends the TxID + hash (json file) in queue2 and errors are sent in errorQueue
+    Runs continuously (check if messages are available in queue1)"""
     while True:
-        poll(queue1, 'errorQueue', 'queue2', storefunction, producer)
+        poll(queue1, errorQueue, queue2, storefunction, server, producer)
 
 
 main(storestringmc)
