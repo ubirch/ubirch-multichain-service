@@ -20,7 +20,7 @@ import hashlib
 from kafka import *
 from ubirch.anchoring import *
 
-args = set_arguments("ethereum")
+args = set_arguments("multichain")
 server = args.server
 
 if server == 'SQS':
@@ -30,7 +30,7 @@ if server == 'SQS':
     aws_secret_access_key = args.accesskey
     aws_access_key_id = args.keyid
     queue1 = getQueue('queue1', url, region, aws_secret_access_key, aws_access_key_id)
-    producer=None
+    producer = None
 
 elif server == 'KAFKA':
     print("SERVICE USING APACHE KAFKA FOR MESSAGING")
