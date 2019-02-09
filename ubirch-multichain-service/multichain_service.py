@@ -148,7 +148,7 @@ burn_address = '1XXXXXXXXNXXXXXXUzXXXXXXPuXXXXXXWpKWMm'
 apicall(chain, "gettotalbalances")
 apicall(chain, "getinfo")
 
-asset = "dollars"
+asset = "test-asset"
 qty = 0.001
 
 
@@ -190,4 +190,3 @@ def main(store_function):
         poll(input_messages, error_messages, output_messages, store_function, server, producer)
 
 
-store_multichain("0x123456")
