@@ -33,7 +33,7 @@ from logging.handlers import RotatingFileHandler
     Depending on the server chosen, several arguments of configuration of the latest are initialized.
 
 """
-args = set_arguments("IOTA")
+args = set_arguments("multichain")
 server = args.server
 
 """
@@ -86,7 +86,6 @@ if server == 'SQS':
 elif server == 'KAFKA':
     logger.info("SERVICE USING APACHE KAFKA FOR MESSAGING")
 
-    input_messages = args.input
     output_messages = args.output
     error_messages = args.errors
 
@@ -94,62 +93,32 @@ elif server == 'KAFKA':
     producer = KafkaProducer(bootstrap_servers=bootstrap_server)
     input_messages = KafkaConsumer(args.input, bootstrap_servers=bootstrap_server)
 
-# path = args.path
-# chain = args.chain
+'''
+    Multichain configuration:
+        -chain name
+        -path to multichain-cli
+        -name of the stream used to publish data
+        -key used to publish data on the stream
+'''
+path_cli = args.path
+chain_name = args.chain
+stream_name = args.stream
+key = args.key
 
-path = "/usr/local/bin/multichain-cli"
-chain = "ubirch-multichain"
 
+def api_call(command):
+    """
 
-# TODO: Make parser for apicall
-
-def apicall(chain, command):
+    :param command: command destined to be sent to the multichain-cli
+    :return: the output of the command
+    """
     command_split = command.split(" ")
-    logger.info(command_split)
-    output = subprocess.check_output([path, chain] + command_split).decode("utf-8")
-    logger.info("Ouput of command '%s' is : \n %s \n" % (command, output))
+    logger.debug(command_split)
+
+    output = subprocess.check_output([path_cli, chain_name] + command_split).decode("utf-8")
+    logger.debug("Ouput of command '%s' is : \n %s \n" % (command, output))
+
     return output
-
-
-#   WALLET AND PERMISSION MANAGEMENT
-def genaddress():
-    return apicall(chain, "getnewaddress")
-
-
-def listaddresses():
-    return apicall(chain, "listaddresses")
-
-
-def grantpermission(address, permission):
-    command = "grant %s %s" % (address, permission)
-    return apicall(chain, command)
-
-
-def sendasset(receiver, asset, qty):
-    command = "sendasset %s %s %d" % (receiver, asset, qty)
-    return apicall(chain, command)
-
-
-#   ASSET ISSUANCE
-def createnewasset(issuing_address, asset_name, asset_qty):  # 'open':true means asset can be issued after being created
-    command = "issue %s {'name':%s,'open':true} %d" % (issuing_address, asset_name, asset_qty)
-    return apicall(chain, command)
-
-
-def issuemore(recipient, asset_name, asset_qty):
-    command = "issuemore %s %s %d" % (recipient, asset_name, asset_qty)
-    return apicall(chain, command)
-
-
-admin_address = '1Gynv7tHvXW2j643Ah6rmP2MnsPvVAQkYA6C9q'
-receiver_address = '1KSawFvmrWypch3CMG14LcH1GX8UK9wAMPzgVT'
-burn_address = '1XXXXXXXXNXXXXXXUzXXXXXXPuXXXXXXWpKWMm'
-
-apicall(chain, "gettotalbalances")
-apicall(chain, "getinfo")
-
-asset = "test-asset"
-qty = 0.001
 
 
 def store_multichain(string):
@@ -165,8 +134,8 @@ def store_multichain(string):
     if is_hex(string):
         logger.debug("'%s' ready to be sent" % string)
         
-        command = "sendasset %s %s %d %s" % (receiver_address, asset, qty, {"text":"hello"})
-        tx_hash = apicall(chain, command).split('\n')[0]
+        command = "publish %s %s %s" % (stream_name, key, string)
+        tx_hash = api_call(command).split('\n')[0]
 
         logger.debug("'%s' sent" % string)
         logger.info({'status': 'added', 'txid': tx_hash, 'message': string})
@@ -190,3 +159,4 @@ def main(store_function):
         poll(input_messages, error_messages, output_messages, store_function, server, producer)
 
 
+main(store_multichain)

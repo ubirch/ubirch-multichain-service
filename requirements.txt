@@ -1,2 +1,2 @@
 kafka-python >= 1.4.3
-ubirch-python-utils >= 1.3.4
+ubirch-python-utils >= 1.3.6
