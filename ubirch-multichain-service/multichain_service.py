@@ -48,7 +48,7 @@ log_levels = {
 }
 
 
-logger = logging.getLogger('ubirch-iota-service')
+logger = logging.getLogger('ubirch-multichain-service')
 level = log_levels.get(args.loglevel.lower())
 logger.setLevel(level)
 
@@ -57,7 +57,7 @@ logger.setLevel(level)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # Handler redirecting logs in a file in 'append' mode, with 1 backup and 1Mo max size
-file_handler = RotatingFileHandler('iota_service.log', mode='a', maxBytes=1000000, backupCount=1)
+file_handler = RotatingFileHandler('multichain_service.log', mode='a', maxBytes=1000000, backupCount=1)
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
@@ -68,7 +68,7 @@ stream_handler.setLevel(logging.DEBUG)
 logger.addHandler(stream_handler)
 
 
-logger.info("You are using ubirch's IOTA anchoring service")
+logger.info("You are using ubirch's MultiChain anchoring service")
 
 if server == 'SQS':
     logger.info("SERVICE USING SQS QUEUE MESSAGING")
@@ -100,6 +100,7 @@ elif server == 'KAFKA':
         -name of the stream used to publish data
         -key used to publish data on the stream
 '''
+
 path_cli = args.path
 chain_name = args.chain
 stream_name = args.stream
@@ -116,7 +117,8 @@ def api_call(command):
     logger.debug(command_split)
 
     output = subprocess.check_output([path_cli, chain_name] + command_split).decode("utf-8")
-    logger.debug("Ouput of command '%s' is : \n %s \n" % (command, output))
+
+    logger.debug("Output of command '%s' is : \n %s \n" % (command, output))
 
     return output
 
